@@ -1,0 +1,93 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    container_name: corpchat_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - corpchat_net
+    depends_on:
+      - db
+      - redis
+
+  web:
+    image: nginx:alpine
+    container_name: corpchat_web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - corpchat_net
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: corpchat_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-corpchat}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-corpchat}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - corpchat_net
+
+  redis:
+    image: redis:alpine
+    container_name: corpchat_redis
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    networks:
+      - corpchat_net
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    container_name: corpchat_queue_worker
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: php artisan queue:work redis --sleep=3 --tries=3
+    networks:
+      - corpchat_net
+    depends_on:
+      - redis
+      - db
+
+  reverb-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    container_name: corpchat_reverb
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/var/www/html
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    networks:
+      - corpchat_net
+    depends_on:
+      - redis
+
+networks:
+  corpchat_net:
+    driver: bridge
+
+volumes:
+  dbdata:
+  redisdata:
