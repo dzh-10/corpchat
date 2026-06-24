@@ -1,0 +1,250 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CorpChat API Documentation",
+    "description": "API endpoints for the CorpChat communication workspace, including conversations, messages, reactions, search, and health checks.",
+    "version": "1.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/conversations": {
+      "get": {
+        "summary": "List Conversations",
+        "description": "Retrieve a paginated list of conversations (cached dynamically).",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Conversation / Compose",
+        "description": "Start a new conversation thread (either internal chat or client email) and send the first message, with optional file attachment upload.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["email", "internal"]
+                  },
+                  "client_email": {
+                    "type": "string"
+                  },
+                  "client_name": {
+                    "type": "string"
+                  },
+                  "recipient_id": {
+                    "type": "integer"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string",
+                    "maxLength": 5000
+                  },
+                  "attachment": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["type", "body"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Conversation created successfully"
+          }
+        }
+      }
+    },
+    "/api/conversations/{conversation}/messages": {
+      "get": {
+        "summary": "List Messages",
+        "description": "Retrieve messages belonging to a conversation (paginated, latest 20 items ordered oldest-to-newest).",
+        "parameters": [
+          {
+            "name": "conversation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      },
+      "post": {
+        "summary": "Send Message",
+        "description": "Post a new message in a conversation thread with optional file attachment.",
+        "parameters": [
+          {
+            "name": "conversation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "maxLength": 5000
+                  },
+                  "attachment": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["body"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message created successfully"
+          }
+        }
+      }
+    },
+    "/api/conversations/{conversation}/messages/{message}/reactions": {
+      "post": {
+        "summary": "Toggle Reaction",
+        "description": "Add or remove a reaction emoji on a message (e.g. 👍, ❤️).",
+        "parameters": [
+          {
+            "name": "conversation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "message",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reaction": {
+                    "type": "string",
+                    "maxLength": 10
+                  }
+                },
+                "required": ["reaction"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reaction toggled successfully"
+          }
+        }
+      }
+    },
+    "/api/employees/search": {
+      "get": {
+        "summary": "Autocomplete Employee Search",
+        "description": "Search users excluding current auth user for autocomplete inputs.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autocomplete list retrieved"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Service Health Check Status",
+        "description": "Verify active connection state of Database, Redis connection, and Reverb websocket server.",
+        "responses": {
+          "200": {
+            "description": "All services healthy"
+          },
+          "503": {
+            "description": "One or more services unhealthy"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sanctum": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Authenticate via Laravel Sanctum API tokens."
+      }
+    }
+  },
+  "security": [
+    {
+      "sanctum": []
+    }
+  ]
+}

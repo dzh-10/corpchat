@@ -3,21 +3,26 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Settings\ReverbSettings;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Pages\SettingsPage;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Actions;
 use Filament\Actions\Action;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class ReverbSettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-signal';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-signal';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات Reverb (WebSocket)';
-    protected static ?int    $navigationSort  = 7;
-    protected static string  $settings = ReverbSettings::class;
+
+    protected static ?int $navigationSort = 7;
+
+    protected static string $settings = ReverbSettings::class;
 
     public function form(Schema $schema): Schema
     {
@@ -39,16 +44,16 @@ class ReverbSettingsPage extends SettingsPage
                     ->label('اختبار اتصال WebSocket')
                     ->icon('heroicon-o-wifi')
                     ->color('success')
-                    ->action(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                    ->action(function (Get $get) {
                         // اختبار ping للـ Reverb server
                         $host = $get('reverb_host');
                         $port = $get('reverb_port');
                         $connected = @fsockopen($host, $port, $errno, $errstr, 3);
                         if ($connected) {
                             fclose($connected);
-                            Notification::make()->title('✅ Reverb يعمل بنجاح على ' . $host . ':' . $port)->success()->send();
+                            Notification::make()->title('✅ Reverb يعمل بنجاح على '.$host.':'.$port)->success()->send();
                         } else {
-                            Notification::make()->title('❌ تعذر الاتصال: ' . $errstr)->danger()->send();
+                            Notification::make()->title('❌ تعذر الاتصال: '.$errstr)->danger()->send();
                         }
                     }),
             ]),

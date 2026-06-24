@@ -4,17 +4,21 @@ namespace App\Filament\Pages\Settings;
 
 use App\Settings\AppearanceSettings;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class AppearanceSettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-paint-brush';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-paint-brush';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'المظهر والتصميم';
-    protected static ?int    $navigationSort  = 6;
-    protected static string  $settings = AppearanceSettings::class;
+
+    protected static ?int $navigationSort = 6;
+
+    protected static string $settings = AppearanceSettings::class;
 
     public function form(Schema $schema): Schema
     {

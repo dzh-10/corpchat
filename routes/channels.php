@@ -9,4 +9,3 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('conversation.{conversationId}', function ($user, $conversationId) {
     return (bool) ($user->is_employee || $user->is_admin);
 });
-

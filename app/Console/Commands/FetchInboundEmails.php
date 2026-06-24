@@ -7,9 +7,10 @@ namespace App\Console\Commands;
 use App\Events\MessageSent;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Settings\MailSettings;
 use Illuminate\Console\Command;
-use Webklex\IMAP\Facades\Client;
 use Illuminate\Support\Facades\DB;
+use Webklex\IMAP\Facades\Client;
 
 class FetchInboundEmails extends Command
 {
@@ -35,7 +36,7 @@ class FetchInboundEmails extends Command
         $this->info('Connecting to IMAP...');
 
         try {
-            $mailSettings = app(\App\Settings\MailSettings::class);
+            $mailSettings = app(MailSettings::class);
             config([
                 'imap.accounts.default.host' => $mailSettings->imap_host,
                 'imap.accounts.default.port' => $mailSettings->imap_port,
@@ -60,7 +61,7 @@ class FetchInboundEmails extends Command
                     $subject = $mail->getSubject()[0] ?? 'No Subject';
                     $body = $mail->getTextBody() ?? $mail->getHTMLBody() ?? '';
                     $messageId = $mail->getMessageId() ?? null;
-                    
+
                     // Attempt to find In-Reply-To header
                     $inReplyTo = $mail->getInReplyTo() ?? null;
 
@@ -74,14 +75,14 @@ class FetchInboundEmails extends Command
                         }
                     }
 
-                    if (!$conversation) {
+                    if (! $conversation) {
                         $conversation = Conversation::where('external_contact_email', $fromAddress)
                             ->where('type', 'external_email')
                             ->first();
                     }
 
                     // Create new conversation if none exists
-                    if (!$conversation) {
+                    if (! $conversation) {
                         $conversation = Conversation::create([
                             'type' => 'external_email',
                             'external_contact_email' => $fromAddress,
@@ -117,11 +118,13 @@ class FetchInboundEmails extends Command
             $client->disconnect();
 
         } catch (\Exception $e) {
-            $this->error('IMAP Error: ' . $e->getMessage());
+            $this->error('IMAP Error: '.$e->getMessage());
+
             return self::FAILURE;
         }
 
         $this->info('Completed fetching emails.');
+
         return self::SUCCESS;
     }
 }

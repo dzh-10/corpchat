@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Conversations;
 use App\Filament\Resources\Conversations\Pages\CreateConversation;
 use App\Filament\Resources\Conversations\Pages\EditConversation;
 use App\Filament\Resources\Conversations\Pages\ListConversations;
+use App\Filament\Resources\Conversations\RelationManagers\MessagesRelationManager;
 use App\Filament\Resources\Conversations\Schemas\ConversationForm;
 use App\Filament\Resources\Conversations\Tables\ConversationsTable;
 use App\Models\Conversation;
@@ -33,7 +34,7 @@ class ConversationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\Conversations\RelationManagers\MessagesRelationManager::class,
+            MessagesRelationManager::class,
         ];
     }
 

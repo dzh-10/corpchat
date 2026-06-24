@@ -4,17 +4,21 @@ namespace App\Filament\Pages\Settings;
 
 use App\Settings\ChatSettings;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class ChatSettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-chat-bubble-left-right';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات المحادثة';
-    protected static ?int    $navigationSort  = 3;
-    protected static string  $settings = ChatSettings::class;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static string $settings = ChatSettings::class;
 
     public function form(Schema $schema): Schema
     {

@@ -15,7 +15,7 @@ class MessageForm
             ->components([
                 Select::make('conversation_id')
                     ->relationship('conversation', 'id')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => "ID: {$record->id} - " . ($record->subject ?: 'No Subject') . " ({$record->type})")
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "ID: {$record->id} - ".($record->subject ?: 'No Subject')." ({$record->type})")
                     ->required(),
                 Select::make('sender_id')
                     ->relationship('sender', 'name')

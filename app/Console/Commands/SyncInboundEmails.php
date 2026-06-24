@@ -2,12 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Webklex\IMAP\Facades\Client;
+use App\Events\MessageSent;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Events\MessageSent;
+use App\Settings\MailSettings;
+use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Webklex\IMAP\Facades\Client;
 
 class SyncInboundEmails extends Command
 {
@@ -30,10 +31,10 @@ class SyncInboundEmails extends Command
      */
     public function handle()
     {
-        $this->info("Connecting to IMAP server...");
-        
+        $this->info('Connecting to IMAP server...');
+
         try {
-            $mailSettings = app(\App\Settings\MailSettings::class);
+            $mailSettings = app(MailSettings::class);
             config([
                 'imap.accounts.default.host' => $mailSettings->imap_host,
                 'imap.accounts.default.port' => $mailSettings->imap_port,
@@ -45,21 +46,21 @@ class SyncInboundEmails extends Command
 
             $client = Client::account('default');
             $client->connect();
-            $this->info("Connected successfully.");
+            $this->info('Connected successfully.');
 
             // Get the INBOX folder
             $folder = $client->getFolder('INBOX');
-            
+
             // Get only unseen messages
             $messages = $folder->query()->unseen()->get();
-            $this->info("Found " . $messages->count() . " unseen emails.");
+            $this->info('Found '.$messages->count().' unseen emails.');
 
             foreach ($messages as $email) {
                 $sender = $email->getFrom()[0];
                 $senderEmail = $sender->mail;
                 $senderName = $sender->personal ?: $sender->mail;
                 $subject = $email->getSubject() ?: 'No Subject';
-                
+
                 // Extract plain text body or HTML fallback
                 $body = $email->getTextBody() ?: $email->getHTMLBody(true) ?: 'Empty message';
 
@@ -70,7 +71,7 @@ class SyncInboundEmails extends Command
                     ->where('external_contact_email', $senderEmail)
                     ->first();
 
-                if (!$conversation) {
+                if (! $conversation) {
                     $conversation = Conversation::create([
                         'uuid' => (string) Str::uuid(),
                         'type' => 'external_email',
@@ -100,11 +101,12 @@ class SyncInboundEmails extends Command
 
                 // 4. Mark email as read on server
                 $email->setFlag('Seen');
-                $this->info("Email synced and marked as read.");
+                $this->info('Email synced and marked as read.');
             }
         } catch (\Exception $e) {
-            $this->error("Error during email sync: " . $e->getMessage());
+            $this->error('Error during email sync: '.$e->getMessage());
             report($e);
+
             return 1;
         }
 

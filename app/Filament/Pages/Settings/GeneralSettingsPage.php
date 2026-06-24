@@ -4,17 +4,21 @@ namespace App\Filament\Pages\Settings;
 
 use App\Settings\GeneralSettings;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class GeneralSettingsPage extends SettingsPage
 {
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات عامة';
-    protected static ?int    $navigationSort = 1;
-    protected static string  $settings = GeneralSettings::class;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static string $settings = GeneralSettings::class;
 
     public function form(Schema $schema): Schema
     {

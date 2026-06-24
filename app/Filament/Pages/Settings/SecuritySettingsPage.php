@@ -4,17 +4,21 @@ namespace App\Filament\Pages\Settings;
 
 use App\Settings\SecuritySettings;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class SecuritySettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-shield-check';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-shield-check';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات الأمان';
-    protected static ?int    $navigationSort  = 5;
-    protected static string  $settings = SecuritySettings::class;
+
+    protected static ?int $navigationSort = 5;
+
+    protected static string $settings = SecuritySettings::class;
 
     public function form(Schema $schema): Schema
     {

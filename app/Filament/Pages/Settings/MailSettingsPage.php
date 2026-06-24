@@ -3,21 +3,26 @@
 namespace App\Filament\Pages\Settings;
 
 use App\Settings\MailSettings;
-use Filament\Forms;
-use Filament\Schemas\Schema;
-use Filament\Pages\SettingsPage;
-use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Actions;
 use Filament\Actions\Action;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Filament\Pages\SettingsPage;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class MailSettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-envelope';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-envelope';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات البريد';
-    protected static ?int    $navigationSort  = 2;
-    protected static string  $settings = MailSettings::class;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static string $settings = MailSettings::class;
 
     public function form(Schema $schema): Schema
     {
@@ -92,7 +97,7 @@ class MailSettingsPage extends SettingsPage
                     ->label('اختبار SMTP')
                     ->icon('heroicon-o-signal')
                     ->color('info')
-                    ->action(function (\Filament\Schemas\Components\Utilities\Get $get) {
+                    ->action(function (Get $get) {
                         try {
                             $host = $get('mail_host');
                             $port = $get('mail_port');
@@ -121,7 +126,7 @@ class MailSettingsPage extends SettingsPage
 
                             Notification::make()->title('✅ SMTP يعمل بنجاح')->success()->send();
                         } catch (\Exception $e) {
-                            Notification::make()->title('❌ فشل الاتصال: ' . $e->getMessage())->danger()->send();
+                            Notification::make()->title('❌ فشل الاتصال: '.$e->getMessage())->danger()->send();
                         }
                     }),
             ]),

@@ -1,46 +1,79 @@
-# CorpChat - Enterprise Hybrid Messaging System
+<p align="center">
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo"/>
+</p>
 
-CorpChat هو نظام مراسلة مؤسسي متكامل يجمع بين المحادثات الداخلية الفورية وإدارة رسائل البريد الإلكتروني الخارجية للعملاء في منصة واحدة موحدة. تم بناء النظام باستخدام تقنيات حديثة وراقية تضمن الأداء العالي والمظهر العصري.
+<h1 align="center">CorpChat</h1>
+<p align="center">
+  <strong>Enterprise Hybrid Messaging System — نظام المراسلة المؤسسي المتكامل</strong>
+</p>
 
----
-
-## الميزات الرئيسية (Key Features)
-
-1. **محادثات داخلية فورية (Real-time Internal Chat)**:
-   - بث مباشر فوري للرسائل باستخدام **Laravel Reverb (WebSockets)** دون الحاجة لإعادة تحميل الصفحة.
-   - مؤشرات ذكية لحالة إرسال وقراءة الرسائل (Sending, Sent, Delivered).
-   - واجهة مستخدم مبنية بأسلوب **Glassmorphism** الأنيق لتجربة بصرية فريدة.
-
-2. **تكامل كامل للبريد الإلكتروني (Hostinger IMAP/SMTP Integration)**:
-   - استقبال رسائل البريد الإلكتروني الخاصة بالعملاء ومزامنتها تلقائياً مع المحادثات عبر بروتوكول **IMAP** (باستخدام حزمة `webklex/laravel-imap`).
-   - إرسال الردود إلى العملاء فورياً عبر بروتوكول **SMTP**.
-   - تحديثات حالة تسليم البريد بالوقت الفعلي.
-
-3. **لوحة تحكم إدارية كاملة (Filament Control Panel)**:
-   - إدارة كاملة للموظفين والمدراء وصلاحياتهم (`UserResource`).
-   - استعراض وإدارة المحادثات الجارية (`ConversationResource`).
-   - إدارة وتعديل كامل لكافة الرسائل وحالاتها (`MessageResource`) والمجموعات.
-   - ميزة تفاعلية لمشاهدة رسائل المحادثة داخل تفاصيلها (Relation Manager).
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Filament-v3-FDAE4B?style=for-the-badge&logo=laravel&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Redis-Cache%20%26%20Queue-DC382D?style=for-the-badge&logo=redis&logoColor=white"/>
+  <img src="https://img.shields.io/badge/WebSockets-Laravel%20Reverb-6C3483?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
+</p>
 
 ---
 
-## متطلبات التشغيل (System Requirements)
-
-- نظام التشغيل: Windows / Linux / macOS.
-- تثبيت **Docker** و **Docker Compose**.
+> CorpChat is a unified enterprise messaging platform that combines **real-time internal team chat** with **external client email management** in a single, modern interface.
 
 ---
 
-## إعداد وتشغيل المشروع (Setup & Execution)
+## ✨ Key Features
 
-### 1. إعداد البيئة وتكوين الاتصال:
-قم بإنشاء ملف `.env` (أو تعديل الملف الحالي) وإعداد البيانات التالية:
+| Feature | Description |
+|---|---|
+| 💬 **Real-time Chat** | Instant messaging via Laravel Reverb (WebSockets) with send/read indicators |
+| 📧 **Email Integration** | Full IMAP/SMTP sync with Hostinger for client email management |
+| 🛡️ **Admin Panel** | Complete Filament v3 dashboard for users, conversations & settings |
+| ⚙️ **Settings Hub** | 7 settings pages: General, Mail, Chat, Notifications, Security, Appearance, Reverb |
+| 🐳 **Docker Ready** | One-command setup with Docker Compose (6 services) |
+| ⚡ **Queue Worker** | Redis-powered background jobs for email sync & notifications |
+
+---
+
+## 🛠️ Tech Stack
+
+```
+Backend   →  Laravel 12.x + PHP 8.3
+Frontend  →  Blade + Vanilla JS (Laravel Echo) + CSS3 (Glassmorphism)
+Database  →  MySQL 8.0
+Cache     →  Redis
+WebSocket →  Laravel Reverb
+Admin     →  Filament PHP v3
+Email     →  webklex/laravel-imap (IMAP) + SMTP
+Deploy    →  Docker Compose + Nginx
+```
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/dzh-10/corpchat.git
+cd corpchat
+```
+
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your credentials:
 
 ```env
 APP_NAME=CorpChat
 APP_URL=http://localhost
 
-# قاعدة البيانات (MySQL 8.0)
+# Database
 DB_CONNECTION=mysql
 DB_HOST=db
 DB_PORT=3306
@@ -48,7 +81,7 @@ DB_DATABASE=corpchat
 DB_USERNAME=corpchat
 DB_PASSWORD=secret
 
-# البث المباشر (Laravel Reverb)
+# WebSocket (Laravel Reverb)
 BROADCAST_CONNECTION=reverb
 REVERB_APP_ID=corpchat_id
 REVERB_APP_KEY=corpchat_key
@@ -57,67 +90,119 @@ REVERB_HOST=reverb-server
 REVERB_PORT=8080
 REVERB_SCHEME=http
 
-# بريد إرسال العملاء (Hostinger SMTP)
+# SMTP — Outgoing Mail
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.hostinger.com
 MAIL_PORT=465
 MAIL_USERNAME=your_email@company.com
-MAIL_PASSWORD=your_hostinger_password
+MAIL_PASSWORD=your_password
 MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS=your_email@company.com
 
-# بريد استقبال العملاء (Hostinger IMAP)
+# IMAP — Incoming Mail
 IMAP_HOST=imap.hostinger.com
 IMAP_PORT=993
 IMAP_ENCRYPTION=ssl
 IMAP_VALIDATE_CERT=true
 IMAP_USERNAME=your_email@company.com
-IMAP_PASSWORD=your_hostinger_password
+IMAP_PASSWORD=your_password
 IMAP_DEFAULT_ACCOUNT=default
 ```
 
-### 2. تشغيل النظام باستخدام Docker Compose:
-قم بتشغيل الأمر التالي لبناء الحاويات وتشغيل الخدمات:
+### 3. Launch with Docker
+
 ```bash
 docker compose up -d --build
 ```
 
-سيبدأ تشغيل الخدمات التالية تلقائياً:
-- **`corpchat_web`**: خادم Nginx للموقع الرئيسي ولوحة التحكم (منفذ `80`).
-- **`corpchat_app`**: تطبيق Laravel 12 (PHP 8.3 FPM).
-- **`corpchat_db`**: قاعدة بيانات MySQL 8.0.
-- **`corpchat_redis`**: ذاكرة التخزين المؤقت وتشغيل الطوابير (Queue).
-- **`corpchat_reverb`**: خادم البث الفوري WebSockets (منفذ `8080`).
-- **`corpchat_queue_worker`**: خادم معالجة الطوابير والمهام في الخلفية.
+This starts **6 services** automatically:
 
-### 3. روابط الوصول (Access Links):
+| Container | Role | Port |
+|---|---|---|
+| `corpchat_web` | Nginx Web Server | `80` |
+| `corpchat_app` | Laravel App (PHP-FPM) | — |
+| `corpchat_db` | MySQL 8.0 | `3306` |
+| `corpchat_redis` | Cache & Queue | `6379` |
+| `corpchat_reverb` | WebSocket Server | `8080` |
+| `corpchat_queue_worker` | Background Jobs | — |
 
-- **بوابة المحادثة الرئيسية (Employee Chat Portal)**:
-  [http://localhost](http://localhost)
-  *(تقوم بتسجيل دخولك تلقائياً كمدير للتجربة الفورية)*
+### 4. Access the application
 
-- **لوحة تحكم المدير (Admin Dashboard)**:
-  [http://localhost/admin](http://localhost/admin)
+| URL | Description |
+|---|---|
+| [http://localhost](http://localhost) | Employee Chat Portal |
+| [http://localhost/admin](http://localhost/admin) | Admin Dashboard |
 
-- **بيانات الدخول الافتراضية للمدير**:
-  - **البريد الإلكتروني**: `admin@corpchat.test`
-  - **كلمة المرور**: `password`
+**Default admin credentials:**
+```
+Email:    admin@corpchat.test
+Password: password
+```
 
-### 4. مزامنة البريد الإلكتروني الوارد (IMAP):
-لتشغيل سحب الرسائل ومزامنتها من خادم البريد، قم بتشغيل الأمر التالي:
+### 5. Sync incoming emails (IMAP)
+
 ```bash
 docker exec corpchat_app php artisan emails:sync
 ```
 
-*(يمكنك وضع هذا الأمر مجدولاً في الـ Cron Job ليتم سحب الرسائل تلقائياً كل دقيقة).*
+> 💡 Add this to a Cron Job to auto-sync every minute.
 
 ---
 
-## هيكلية المشروع والتقنيات (Tech Stack)
+## 📁 Project Structure
 
-- **Backend**: Laravel 12.x + PHP 8.3
-- **Frontend**: Blade HTML5 + Vanilla JS (Reactivity via Laravel Echo) + Vanilla CSS3
-- **Database**: MySQL 8.0
-- **Caching & Queue**: Redis
-- **Real-time WebSockets**: Laravel Reverb
-- **Admin Framework**: Filament PHP v3
+```
+corpchat/
+├── app/
+│   ├── Console/Commands/        # emails:sync, fetch-inbound
+│   ├── Events/                  # MessageSent (WebSocket broadcast)
+│   ├── Filament/
+│   │   ├── Pages/Settings/      # 7 settings pages
+│   │   └── Resources/           # Users, Conversations, Messages
+│   ├── Jobs/                    # SendOutboundEmailJob
+│   ├── Models/                  # User, Conversation, Message
+│   └── Settings/                # Spatie Settings classes
+├── database/
+│   ├── migrations/
+│   └── settings/                # Settings migrations
+├── resources/views/
+│   ├── auth/login.blade.php
+│   └── chat.blade.php           # Main chat interface
+├── docker-compose.yml
+├── Dockerfile.app
+└── nginx.conf
+```
+
+---
+
+## ⚙️ Admin Settings Pages
+
+| Page | Settings |
+|---|---|
+| 🌐 General | App name, logo, language, timezone, maintenance mode |
+| 📧 Mail | SMTP config, IMAP config, sync interval, test connection |
+| 💬 Chat | Attachments, read receipts, typing indicators, retention |
+| 🔔 Notifications | Browser, email, sound alerts, event triggers |
+| 🛡️ Security | Session timeout, 2FA, login attempts, IP whitelist |
+| 🎨 Appearance | Theme mode, colors, fonts, Glassmorphism, date format |
+| ⚡ Reverb | WebSocket host, port, connections limit, debug mode |
+
+---
+
+## 📋 Requirements
+
+- Docker & Docker Compose
+- Git
+- (Optional) PHP 8.3 + Composer for local development without Docker
+
+---
+
+## 📄 License
+
+This project is open-sourced under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Built with ❤️ using <strong>Laravel 12</strong> + <strong>Filament v3</strong> + <strong>Laravel Reverb</strong>
+</p>

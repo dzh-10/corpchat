@@ -4,17 +4,21 @@ namespace App\Filament\Pages\Settings;
 
 use App\Settings\NotificationSettings;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class NotificationSettingsPage extends SettingsPage
 {
-    protected static \BackedEnum|string|null $navigationIcon  = 'heroicon-o-bell-alert';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-bell-alert';
+
     protected static \UnitEnum|string|null $navigationGroup = 'الإعدادات';
+
     protected static ?string $navigationLabel = 'إعدادات الإشعارات';
-    protected static ?int    $navigationSort  = 4;
-    protected static string  $settings = NotificationSettings::class;
+
+    protected static ?int $navigationSort = 4;
+
+    protected static string $settings = NotificationSettings::class;
 
     public function form(Schema $schema): Schema
     {

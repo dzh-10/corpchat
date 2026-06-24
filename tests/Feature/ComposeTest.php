@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Jobs\SendOutboundEmailJob;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
-use App\Jobs\SendOutboundEmailJob;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ComposeTest extends TestCase
@@ -40,7 +41,7 @@ class ComposeTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->postJson('/conversations', [
+        $response = $this->actingAs($me)->postJson('/api/conversations', [
             'type' => 'email',
             'client_email' => 'customer@external.com',
             'client_name' => 'John Customer',
@@ -78,7 +79,7 @@ class ComposeTest extends TestCase
         $me = User::factory()->create();
         $colleague = User::factory()->create(['name' => 'Dave Colleague']);
 
-        $response = $this->actingAs($me)->postJson('/conversations', [
+        $response = $this->actingAs($me)->postJson('/api/conversations', [
             'type' => 'internal',
             'recipient_id' => $colleague->id,
             'subject' => 'Quick Sync',
@@ -102,5 +103,103 @@ class ComposeTest extends TestCase
         $this->assertEquals('Do you have 5 minutes?', $message->body);
         $this->assertEquals('internal', $message->type);
         $this->assertEquals('delivered', $message->status);
+    }
+
+    public function test_can_get_paginated_messages(): void
+    {
+        $me = User::factory()->create();
+        $conversation = Conversation::create([
+            'uuid' => (string) Str::uuid(),
+            'type' => 'internal_chat',
+            'subject' => 'Group Discussion',
+        ]);
+
+        for ($i = 0; $i < 25; $i++) {
+            Message::create([
+                'conversation_id' => $conversation->id,
+                'sender_id' => $me->id,
+                'sender_email' => $me->email,
+                'sender_name' => $me->name,
+                'body' => "Message number {$i}",
+                'type' => 'internal',
+                'status' => 'delivered',
+            ]);
+        }
+
+        $response = $this->actingAs($me)->getJson("/api/conversations/{$conversation->id}/messages");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'conversation_id',
+                        'sender_id',
+                        'sender_email',
+                        'sender_name',
+                        'body',
+                        'type',
+                        'status',
+                        'reactions',
+                        'created_at',
+                    ],
+                ],
+                'links',
+                'meta',
+            ]);
+
+        $this->assertCount(20, $response->json('data'));
+    }
+
+    public function test_can_toggle_reaction_on_message(): void
+    {
+        $me = User::factory()->create();
+        $conversation = Conversation::create([
+            'uuid' => (string) Str::uuid(),
+            'type' => 'internal_chat',
+            'subject' => 'Group Discussion',
+        ]);
+
+        $message = Message::create([
+            'conversation_id' => $conversation->id,
+            'sender_id' => $me->id,
+            'sender_email' => $me->email,
+            'sender_name' => $me->name,
+            'body' => 'Hello team!',
+            'type' => 'internal',
+            'status' => 'delivered',
+        ]);
+
+        $response = $this->actingAs($me)->postJson("/api/conversations/{$conversation->id}/messages/{$message->id}/reactions", [
+            'reaction' => '👍',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'action' => 'added',
+            ]);
+
+        $this->assertDatabaseHas('message_reactions', [
+            'message_id' => $message->id,
+            'user_id' => $me->id,
+            'reaction' => '👍',
+        ]);
+
+        $response = $this->actingAs($me)->postJson("/api/conversations/{$conversation->id}/messages/{$message->id}/reactions", [
+            'reaction' => '👍',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'action' => 'removed',
+            ]);
+
+        $this->assertDatabaseMissing('message_reactions', [
+            'message_id' => $message->id,
+            'user_id' => $me->id,
+            'reaction' => '👍',
+        ]);
     }
 }
