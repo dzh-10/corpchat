@@ -1,0 +1,8 @@
+.git
+.github
+node_modules
+public/hot
+# public/storage is a symlink — exclude only if it exists as a broken symlink
+# public/storage
+*.log
+.env.example
