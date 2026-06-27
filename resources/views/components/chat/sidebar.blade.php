@@ -22,48 +22,57 @@
 
   {{-- Folders --}}
   <nav class="folder-nav" id="folder-nav">
-    <a href="#" class="folder-item active" data-folder="inbox" id="folder-inbox">
+    <a href="#" class="folder-item active" data-folder="inbox">
       <i class="ti ti-inbox"></i>
       <span>Inbox</span>
       <span class="badge" id="badge-inbox" style="display:none"></span>
     </a>
-    <a href="#" class="folder-item" data-folder="starred" id="folder-starred">
+    <a href="#" class="folder-item" data-folder="starred">
       <i class="ti ti-star"></i>
       <span>Starred</span>
     </a>
-    <a href="#" class="folder-item" data-folder="snoozed" id="folder-snoozed">
+    <a href="#" class="folder-item" data-folder="snoozed">
       <i class="ti ti-clock"></i>
       <span>Snoozed</span>
     </a>
-    <a href="#" class="folder-item" data-folder="sent" id="folder-sent">
+    <a href="#" class="folder-item" data-folder="sent">
       <i class="ti ti-send"></i>
       <span>Sent</span>
     </a>
-    <a href="#" class="folder-item" data-folder="drafts" id="folder-drafts">
+    <a href="#" class="folder-item" data-folder="drafts">
       <i class="ti ti-file"></i>
       <span>Drafts</span>
       <span class="badge" id="badge-drafts" style="display:none"></span>
     </a>
   </nav>
 
+  {{-- Conversations list (rendered by JS) --}}
+  <div class="section-label" id="section-label-internal" style="display:none">
+    الدردشات الداخلية / Internal Chats
+  </div>
+  <div class="conv-list" id="internal-chats-list"></div>
+
+  <div class="section-label" id="section-label-external" style="display:none">
+    البريد الخارجي / Client Emails
+  </div>
+  <div class="conv-list" id="external-emails-list"></div>
+
   {{-- Labels --}}
-  <div class="sidebar-section-header">
+  <div class="sidebar-section-header labels-header">
     <button class="section-toggle" id="labels-toggle" aria-expanded="true">
       <i class="ti ti-chevron-down"></i>
     </button>
     <span>التصنيفات / LABELS / ÉTIQUETTES</span>
   </div>
-  <div class="labels-list" id="labels-list">
-    {{-- Populated by JS via GET /api/labels --}}
-  </div>
+  <div class="labels-list" id="labels-list"></div>
 
   {{-- Spam / Trash --}}
-  <a href="#" class="folder-item" data-folder="spam" id="folder-spam">
+  <a href="#" class="folder-item" data-folder="spam">
     <i class="ti ti-alert-circle"></i>
     <span>Spam</span>
     <span class="badge" id="badge-spam" style="display:none"></span>
   </a>
-  <a href="#" class="folder-item" data-folder="trash" id="folder-trash">
+  <a href="#" class="folder-item" data-folder="trash">
     <i class="ti ti-trash"></i>
     <span>Trash</span>
   </a>
@@ -84,7 +93,7 @@
       <div class="avatar-role">{{ $authUser->is_admin ? 'Admin' : 'Employee' }}</div>
     </div>
     @if($authUser->is_admin)
-      <a href="/admin" class="new-btn" title="Settings">
+      <a href="/admin" class="new-btn" title="Settings" style="margin-left:auto">
         <i class="ti ti-settings"></i>
       </a>
     @endif
